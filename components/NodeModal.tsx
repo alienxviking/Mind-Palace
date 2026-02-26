@@ -17,11 +17,11 @@ export default function NodeModal({ node, onClose, onDelete, onDeepDive }: NodeM
     const handleDeepDive = async () => {
         if (isLoading) return;
         setIsLoading(true);
-        try {
+        // Add a small delay so the user sees the 'Analyzing...' state
+        // and the button becomes 'inactive' as requested.
+        setTimeout(async () => {
             await onDeepDive(node.id);
-        } finally {
-            setIsLoading(false);
-        }
+        }, 300);
     };
 
     const hasDeepDive = false; // Allow deep dive even if summary exists

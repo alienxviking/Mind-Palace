@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import LandingUI from "@/components/LandingUI";
 import AuthUI from "@/components/AuthUI";
@@ -14,6 +14,11 @@ export default function LandingPage() {
     const [isLoaded, setIsLoaded] = useState(false);
     const [isDiving, setIsDiving] = useState(false);
     const [session, setSession] = useState<Session | null>(null);
+    const isAuthRef = useRef(false);
+
+    useEffect(() => {
+        isAuthRef.current = isAuthOpen;
+    }, [isAuthOpen]);
 
     useEffect(() => {
         // Initial setup
@@ -27,7 +32,9 @@ export default function LandingPage() {
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
             setSession(session);
-            if (session && event === 'SIGNED_IN') {
+            // Only redirect if a sign-in event happens while the auth modal is open
+            // This prevents automatic redirection on page focus/session refresh
+            if (session && event === 'SIGNED_IN' && isAuthRef.current) {
                 setIsDiving(true);
                 router.push("/palace");
             }

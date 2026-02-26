@@ -3,13 +3,15 @@
 import { useEffect, useState, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 import Experience from "@/components/Experience";
 import Terminal from "@/components/Terminal";
 import NodeModal from "@/components/NodeModal";
+import UserManual from "@/components/UserManual";
 import { analyzeNodeContent, suggestLinks } from "@/lib/ai";
 import { fetchNodes, fetchEdges, createNode, createEdge, deleteNode, updateNode, supabase } from "@/lib/supabase";
 import { Session } from "@supabase/supabase-js";
-import { LogOut } from "lucide-react";
+import { LogOut, HelpCircle } from "lucide-react";
 
 const ALL_PLANET_TYPES = [
     "earth", "mars", "jupiter", "saturn", "venus",
@@ -27,6 +29,7 @@ export default function PalacePage() {
     const [isLoaded, setIsLoaded] = useState(false);
     const [session, setSession] = useState<Session | null>(null);
     const [isLocked, setIsLocked] = useState(true);
+    const [showManual, setShowManual] = useState(false);
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -56,6 +59,17 @@ export default function PalacePage() {
             subscription.unsubscribe();
         };
     }, [router]);
+
+    useEffect(() => {
+        if (isLoaded) {
+            const timer = setTimeout(() => setShowManual(true), 1500);
+            return () => clearTimeout(timer);
+        }
+    }, [isLoaded]);
+
+    const handleCloseManual = () => {
+        setShowManual(false);
+    };
 
     useEffect(() => {
         const initData = async () => {
@@ -180,7 +194,17 @@ export default function PalacePage() {
                     </div>
 
                     {session && (
-                        <div className="flex flex-col items-end gap-2">
+                        <div className="flex items-center gap-3 pointer-events-auto">
+                            <button
+                                onClick={() => setShowManual(true)}
+                                className="glass-dark p-3 rounded-full hover:scale-110 border border-white/10 hover:border-cyan-500/30 transition-all shadow-[0_0_20px_rgba(255,255,255,0.05)] hover:shadow-[0_0_20px_rgba(34,211,238,0.2)] group"
+                                title="Open Operator Manual"
+                                data-cursor="BOX"
+                                data-cursor-magnetic
+                            >
+                                <HelpCircle className="w-4 h-4 text-white/40 group-hover:text-cyan-400 transition-colors" />
+                            </button>
+
                             <button
                                 onClick={async () => {
                                     await supabase.auth.signOut();
@@ -246,6 +270,36 @@ export default function PalacePage() {
                 onDelete={handleNodeDelete}
                 onDeepDive={handleDeepDive}
             />
+
+            <UserManual
+                isOpen={showManual}
+                onClose={handleCloseManual}
+            />
+
+            <AnimatePresence>
+                {!isLoaded && (
+                    <motion.div
+                        initial={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 1, ease: "easeInOut" }}
+                        className="fixed inset-0 z-[1000] bg-black flex items-center justify-center"
+                    >
+                        <div className="flex flex-col items-center gap-8">
+                            <div className="w-64 h-[2px] bg-white/5 rounded-full overflow-hidden relative border border-white/5">
+                                <motion.div
+                                    className="absolute inset-0 bg-cyan-500 shadow-[0_0_20px_rgba(34,211,238,0.5)]"
+                                    initial={{ x: "-100%" }}
+                                    animate={{ x: "0%" }}
+                                    transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                                />
+                            </div>
+                            <span className="text-[10px] tracking-[0.8em] text-cyan-400/60 font-bold uppercase animate-pulse">
+                                Initializing Neural Grid
+                            </span>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </main>
     );
 }

@@ -2,13 +2,19 @@
 
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Stars, PerspectiveCamera, Float, Text, Line, Billboard, Html, useTexture, useProgress } from "@react-three/drei";
-import { useRef, useMemo, useState, useEffect, Suspense } from "react";
+import { useRef, useMemo, useState, useEffect, Suspense, memo } from "react";
 import * as THREE from "three";
 import gsap from "gsap";
 import { motion, AnimatePresence } from "framer-motion";
 
-const NeuralPulseEdge = ({ start, end }: { start: [number, number, number], end: [number, number, number] }) => {
+const NeuralPulseEdge = memo(({ start, end, delay = 0 }: { start: [number, number, number], end: [number, number, number], delay?: number }) => {
     const materialRef = useRef<THREE.ShaderMaterial>(null!);
+    const [visible, setVisible] = useState(false);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setVisible(true), delay * 1000);
+        return () => clearTimeout(timer);
+    }, [delay]);
 
     const curve = useMemo(() => {
         const vStart = new THREE.Vector3(...start);
@@ -28,6 +34,8 @@ const NeuralPulseEdge = ({ start, end }: { start: [number, number, number], end:
             materialRef.current.uniforms.uTime.value = state.clock.getElapsedTime();
         }
     });
+
+    if (!visible) return null;
 
     return (
         <mesh>
@@ -71,9 +79,9 @@ const NeuralPulseEdge = ({ start, end }: { start: [number, number, number], end:
             />
         </mesh>
     );
-};
+});
 
-const Node = ({ id, position, title, color: nodeColor, isSelected, onClick, planetType, isLocked, onPositionChange, onDragStart, onDragEnd }: any) => {
+const Node = memo(({ id, position, title, color: nodeColor, isSelected, onClick, planetType, isLocked, onPositionChange, onDragStart, onDragEnd }: any) => {
     const meshRef = useRef<THREE.Mesh>(null!);
     const cloudsRef = useRef<THREE.Mesh>(null!);
     const ringsRef = useRef<THREE.Mesh>(null!);
@@ -88,7 +96,7 @@ const Node = ({ id, position, title, color: nodeColor, isSelected, onClick, plan
 
     // Map all 17 high-res textures
     const textureUrls: Record<string, string> = {
-        earth: "/planets/earth.jpg",
+        earth: "/planets/earth_day.jpg",
         mars: "/planets/mars.jpg",
         jupiter: "/planets/jupiter.jpg",
         saturn: "/planets/saturn.jpg",
@@ -329,7 +337,7 @@ const Node = ({ id, position, title, color: nodeColor, isSelected, onClick, plan
             )}
         </group>
     );
-};
+});
 
 const HeroPlanet = ({ isEntered }: { isEntered: boolean }) => {
     const meshRef = useRef<THREE.Mesh>(null!);
@@ -554,6 +562,7 @@ const SceneContent = ({ nodes, edges, selectedNode, onNodeSelect, isEntered, onL
                                 key={`${edge.source}-${edge.target}`}
                                 start={sourceNode.position}
                                 end={targetNode.position}
+                                delay={2.5} // Wait for planets to scale up (1.5s delay + 1.5s duration approx)
                             />
                         );
                     })}
@@ -605,7 +614,7 @@ const LoadingTracker = ({ onLoaded }: { onLoaded: (loaded: boolean) => void }) =
     return null;
 };
 
-export default function Experience({ nodes, edges, selectedNode, onNodeSelect, isEntered, onLoaded, isLocked, onNodePositionUpdate }: any) {
+const Experience = memo(({ nodes, edges, selectedNode, onNodeSelect, isEntered, onLoaded, isLocked, onNodePositionUpdate }: any) => {
     return (
         <div className="absolute inset-0">
             <Canvas
@@ -628,4 +637,6 @@ export default function Experience({ nodes, edges, selectedNode, onNodeSelect, i
             </Canvas>
         </div>
     );
-}
+});
+
+export default Experience;
