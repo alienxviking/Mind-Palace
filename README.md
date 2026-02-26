@@ -52,8 +52,8 @@ Step inside a specific node for an immersive, focused environment. Perfect for l
 
 ### 2. Installation
 ```bash
-git clone https://github.com/your-username/mind-palace-os.git
-cd mind-palace-os
+git clone https://github.com/alienxiking/Mind-Palace
+cd Mind-Palace
 npm install
 ```
 
