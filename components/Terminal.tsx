@@ -101,12 +101,13 @@ export default function Terminal({
         <>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="glass-dark px-6 py-4 rounded-full hover:scale-105 border border-cyan-500/30 transition-all pointer-events-auto palace-button shadow-[0_0_20px_rgba(34,211,238,0.2)] flex items-center gap-3 group"
+                className="glass-dark px-4 md:px-6 py-4 rounded-full hover:scale-105 border border-cyan-500/30 transition-all pointer-events-auto palace-button shadow-[0_0_20px_rgba(34,211,238,0.2)] flex items-center gap-3 group"
                 data-cursor="BOX"
                 data-cursor-magnetic
+                title="Terminal"
             >
                 <TerminalIcon className="w-5 h-5 text-cyan-400 group-hover:scale-110 transition-transform" />
-                <span className="text-[10px] font-bold tracking-[0.3em] text-white/40 group-hover:text-cyan-400 transition-colors uppercase">
+                <span className="hidden md:inline text-[10px] font-bold tracking-[0.3em] text-white/40 group-hover:text-cyan-400 transition-colors uppercase">
                     Terminal
                 </span>
             </button>
@@ -117,7 +118,7 @@ export default function Terminal({
                         initial={{ opacity: 0, y: 100, scale: 0.9 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 100, scale: 0.9 }}
-                        className="fixed bottom-24 right-8 w-96 h-[500px] z-[100] glass-dark rounded-2xl border border-white/10 flex flex-col overflow-hidden pointer-events-auto shadow-2xl"
+                        className="fixed bottom-24 right-4 md:right-8 w-[calc(100vw-2rem)] md:w-96 h-[400px] md:h-[500px] z-[100] glass-dark rounded-2xl border border-white/10 flex flex-col overflow-hidden pointer-events-auto shadow-2xl"
                     >
                         <div className="p-4 border-b border-white/10 flex justify-between items-center bg-white/5">
                             <div className="flex items-center gap-2">

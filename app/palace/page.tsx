@@ -185,12 +185,12 @@ export default function PalacePage() {
             />
 
             <div id="ui-layer" className="fixed inset-0 z-10 pointer-events-none p-8 flex flex-col justify-between">
-                <header className="pointer-events-auto flex justify-between items-start">
+                <header className="pointer-events-auto flex justify-between items-start gap-4">
                     <div>
-                        <h1 className="text-4xl font-semibold tracking-[0.2em] logo text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-100 to-slate-400 uppercase">
+                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-semibold tracking-[0.2em] logo text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-100 to-slate-400 uppercase leading-none">
                             MIND PALACE
                         </h1>
-                        <p className="text-[10px] opacity-40 font-bold uppercase tracking-[0.8em] mt-2 font-plus-jakarta">
+                        <p className="text-[8px] md:text-[10px] opacity-40 font-bold uppercase tracking-[0.4em] md:tracking-[0.8em] mt-2 font-plus-jakarta">
                             Knowledge Visualization OS
                         </p>
                     </div>
@@ -217,19 +217,20 @@ export default function PalacePage() {
                                         window.location.href = "/";
                                     }
                                 }}
-                                className="group flex items-center gap-3 px-6 py-3 bg-white/5 hover:bg-red-500/10 border border-white/10 hover:border-red-500/30 rounded-full transition-all"
+                                className="group flex items-center gap-2 md:gap-3 px-3 md:px-6 py-3 bg-white/5 hover:bg-red-500/10 border border-white/10 hover:border-red-500/30 rounded-full transition-all"
+                                title="Terminate Session"
                             >
-                                <span className="text-[10px] font-bold tracking-[0.3em] text-white/40 group-hover:text-red-400 transition-colors uppercase">
+                                <span className="hidden md:inline text-[10px] font-bold tracking-[0.3em] text-white/40 group-hover:text-red-400 transition-colors uppercase">
                                     Terminate Session
                                 </span>
-                                <LogOut size={14} className="text-white/20 group-hover:text-red-400 transition-colors" />
+                                <LogOut size={14} className="text-white/40 group-hover:text-red-400 transition-colors" />
                             </button>
                         </div>
                     )}
                 </header>
 
-                <footer className="pointer-events-auto flex justify-between items-end w-full">
-                    <div className="glass p-4 rounded-xl max-w-xs">
+                <footer className="pointer-events-auto flex justify-between items-end w-full gap-4">
+                    <div className="hidden md:block glass p-4 rounded-xl max-w-xs">
                         <p className="text-xs opacity-50 mb-2">HOTKEYS</p>
                         <div className="flex flex-col gap-1 text-[10px] font-mono text-white/60">
                             <div className="flex gap-3">
@@ -252,16 +253,16 @@ export default function PalacePage() {
                         setIsOpen={setIsTerminalOpen}
                     />
 
-                    <div className="absolute bottom-10 left-1/2 -translate-x-1/2 pointer-events-auto">
+                    <div className="absolute bottom-10 left-1/2 -translate-x-1/2 pointer-events-none w-full flex justify-center px-4">
                         <button
                             onClick={() => setIsLocked(!isLocked)}
                             className={cn(
-                                "group flex items-center gap-4 px-8 py-3 glass-dark border rounded-full transition-all shadow-[0_0_30px_rgba(34,211,238,0.1)] hover:shadow-[0_0_40px_rgba(34,211,238,0.2)]",
+                                "group flex items-center justify-center gap-2 md:gap-4 px-6 md:px-8 py-3 glass-dark border rounded-full transition-all shadow-[0_0_30px_rgba(34,211,238,0.1)] hover:shadow-[0_0_40px_rgba(34,211,238,0.2)] pointer-events-auto",
                                 isLocked ? "border-white/10 hover:border-cyan-500/30" : "bg-cyan-500/10 border-cyan-500/50"
                             )}
                         >
                             <span className={cn(
-                                "text-[10px] font-bold tracking-[0.4em] uppercase transition-colors",
+                                "text-[8px] md:text-[10px] font-bold tracking-[0.2em] md:tracking-[0.4em] uppercase transition-colors whitespace-nowrap",
                                 isLocked ? "text-white/40 group-hover:text-cyan-400" : "text-cyan-400"
                             )}>
                                 {isLocked ? "Palace Locked" : "Palace Unlocked"}

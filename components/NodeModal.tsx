@@ -32,7 +32,7 @@ export default function NodeModal({ node, onClose, onDelete, onDeepDive }: NodeM
                 initial={{ opacity: 0, x: -100 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -100 }}
-                className="fixed top-1/2 left-12 -translate-y-1/2 w-80 z-40 glass p-6 rounded-3xl border border-white/20 pointer-events-auto"
+                className="fixed top-1/2 left-1/2 md:left-12 -translate-x-1/2 md:translate-x-0 -translate-y-1/2 w-[calc(100vw-4rem)] md:w-80 z-40 glass p-6 rounded-3xl border border-white/20 pointer-events-auto"
             >
                 <div className="flex justify-between items-start mb-6">
                     <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: `#${node.color.toString(16)}22`, border: `1px solid #${node.color.toString(16)}` }}>
