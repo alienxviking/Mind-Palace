@@ -177,7 +177,7 @@ export default function DeepDivePage() {
     };
 
     return (
-        <main className="relative h-screen w-full bg-[#020408] overflow-hidden flex">
+        <main className="relative h-screen lg:h-screen w-full bg-[#020408] overflow-y-auto lg:overflow-hidden flex flex-col lg:flex-row">
             <AnimatePresence>
                 {!node && (
                     <motion.div
@@ -214,9 +214,9 @@ export default function DeepDivePage() {
             </div>
 
             {/* UI Overlay */}
-            <div className="relative z-10 flex w-full h-full p-8 gap-8">
+            <div className="relative z-10 flex flex-col lg:flex-row w-full lg:h-full p-4 md:p-8 gap-4 lg:gap-8 overflow-y-visible lg:overflow-y-hidden pb-20 lg:pb-8">
                 {/* Content Panel */}
-                <div className="flex-1 flex flex-col justify-between">
+                <div className="w-full lg:flex-1 flex flex-col justify-start lg:justify-between">
                     {node && (
                         <motion.div
                             initial={{ opacity: 0, x: -50 }}
@@ -224,32 +224,32 @@ export default function DeepDivePage() {
                         >
                             <button
                                 onClick={() => router.push("/palace")}
-                                className="flex items-center gap-2 text-white/40 hover:text-cyan-400 transition-colors mb-8 group"
+                                className="flex items-center gap-2 text-white/40 hover:text-cyan-400 transition-colors mb-4 lg:mb-8 group"
                             >
                                 <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
                                 <span className="text-xs font-bold uppercase tracking-[0.3em]">Return to Palace</span>
                             </button>
 
-                            <h1 className="text-6xl font-bold logo text-white mb-4 tracking-tight uppercase">
+                            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold logo text-white mb-4 tracking-tight uppercase leading-tight">
                                 {node.title}
                             </h1>
-                            <div className="flex flex-wrap gap-2 mb-8">
+                            <div className="flex flex-wrap gap-2 mb-4 lg:mb-8">
                                 {node.tags?.map((tag: string) => (
-                                    <span key={tag} className="px-3 py-1 bg-cyan-500/10 border border-cyan-500/30 rounded-full text-[10px] text-cyan-400 font-bold tracking-widest uppercase">
+                                    <span key={tag} className="px-3 py-1 bg-cyan-500/10 border border-cyan-500/30 rounded-full text-[8px] md:text-[10px] text-cyan-400 font-bold tracking-[0.1em] md:tracking-widest uppercase">
                                         {tag}
                                     </span>
                                 ))}
                             </div>
 
-                            <div className="glass p-8 rounded-3xl border border-white/10 max-w-2xl">
-                                <h3 className="text-xs font-bold text-white/40 uppercase tracking-[0.4em] mb-4">Core Knowledge Summary</h3>
-                                <p className="text-lg text-white/80 leading-relaxed font-plus-jakarta">
+                            <div className="glass p-6 md:p-8 rounded-3xl border border-white/10 w-full max-w-2xl">
+                                <h3 className="text-[10px] font-bold text-white/40 uppercase tracking-[0.4em] mb-4">Core Knowledge Summary</h3>
+                                <p className="text-base md:text-lg text-white/80 leading-relaxed font-plus-jakarta">
                                     {node.summary}
                                 </p>
                             </div>
 
                             {/* Hotkeys Section */}
-                            <div className="mt-8 flex gap-6 text-[10px] font-mono text-white/30 uppercase tracking-[0.2em]">
+                            <div className="mt-8 hidden md:flex gap-6 text-[10px] font-mono text-white/30 uppercase tracking-[0.2em]">
                                 <div className="flex items-center gap-2">
                                     <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-cyan-400 font-bold">ESC</span>
                                     <span>Return to Palace</span>
@@ -263,7 +263,7 @@ export default function DeepDivePage() {
                 <motion.div
                     initial={{ opacity: 0, x: 50 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="w-[450px] glass rounded-[2.5rem] border border-white/10 flex flex-col overflow-hidden backdrop-blur-3xl bg-black/40"
+                    className="w-full lg:w-[450px] h-[500px] md:h-[600px] lg:h-full glass rounded-[2rem] md:rounded-[2.5rem] border border-white/10 flex flex-col overflow-hidden backdrop-blur-3xl bg-black/40 mt-0 lg:mt-0 mb-0 lg:mb-0"
                 >
                     {node && (
                         <>
