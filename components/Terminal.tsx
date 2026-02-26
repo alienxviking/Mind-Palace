@@ -10,11 +10,17 @@ import { createNode } from "@/lib/supabase";
 export default function Terminal({
     nodes,
     onNodeCreated,
+    onNodeDelete,
+    onNodeSelect,
+    onConnect,
     isOpen,
     setIsOpen
 }: {
     nodes: any[],
     onNodeCreated: (node: any) => void,
+    onNodeDelete: (id: string) => void,
+    onNodeSelect: (node: any) => void,
+    onConnect: (sourceId: string, targetId: string) => void,
     isOpen: boolean,
     setIsOpen: (open: boolean) => void
 }) {
@@ -31,7 +37,7 @@ export default function Terminal({
         const cmd = cmdParts[0].toLowerCase();
 
         if (cmd === "help") {
-            setHistory(prev => [...prev, "Available: create [title], list, clear"]);
+            setHistory(prev => [...prev, "Available: create [title], delete [title], connect [t1] [t2], find [title], list, clear"]);
         } else if (cmd === "create" && cmdParts.length > 1) {
             const title = cmdParts.slice(1).join(" ");
             setHistory(prev => [...prev, `AI: Architecting node '${title}'...`]);
@@ -42,11 +48,39 @@ export default function Terminal({
                     color: Math.floor(Math.random() * 16777215),
                     position: { x: (Math.random() - 0.5) * 20, y: (Math.random() - 0.5) * 20, z: (Math.random() - 0.5) * 10 }
                 };
-                // For now, optimistic update + mock if no env
                 onNodeCreated(newNode);
-                setHistory(prev => [...prev, `Success: '${title}' materialized in the palace.`]);
+                setHistory(prev => [...prev, `Success: '${title}' materialized.`]);
             } catch (err) {
-                setHistory(prev => [...prev, "Error: Failed to sync with Supabase."]);
+                setHistory(prev => [...prev, "Error: Failed to materialize node."]);
+            }
+        } else if (cmd === "delete" && cmdParts.length > 1) {
+            const title = cmdParts.slice(1).join(" ");
+            const node = nodes.find(n => n.title.toLowerCase() === title.toLowerCase());
+            if (node) {
+                onNodeDelete(node.id);
+                setHistory(prev => [...prev, `Success: '${node.title}' deconsolidated.`]);
+            } else {
+                setHistory(prev => [...prev, `Error: Node '${title}' not found.`]);
+            }
+        } else if (cmd === "connect" && cmdParts.length > 2) {
+            const t1 = cmdParts[1];
+            const t2 = cmdParts[2];
+            const n1 = nodes.find(n => n.title.toLowerCase() === t1.toLowerCase());
+            const n2 = nodes.find(n => n.title.toLowerCase() === t2.toLowerCase());
+            if (n1 && n2) {
+                onConnect(n1.id, n2.id);
+                setHistory(prev => [...prev, `Success: Link established between '${n1.title}' and '${n2.title}'.`]);
+            } else {
+                setHistory(prev => [...prev, "Error: One or both nodes not found."]);
+            }
+        } else if (cmd === "find" && cmdParts.length > 1) {
+            const title = cmdParts.slice(1).join(" ");
+            const node = nodes.find(n => n.title.toLowerCase().includes(title.toLowerCase()));
+            if (node) {
+                onNodeSelect(node);
+                setHistory(prev => [...prev, `Found: Navigation lock engaged on '${node.title}'.`]);
+            } else {
+                setHistory(prev => [...prev, `Error: No nodes matching '${title}'.`]);
             }
         } else if (cmd === "list") {
             if (nodes.length === 0) {

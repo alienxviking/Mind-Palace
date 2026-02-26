@@ -72,12 +72,18 @@ const NeuralPulseEdge = ({ start, end }: { start: [number, number, number], end:
     );
 };
 
-const Node = ({ position, title, color: nodeColor, isSelected, onClick, planetType }: any) => {
+const Node = ({ id, position, title, color: nodeColor, isSelected, onClick, planetType, isLocked, onPositionChange, onDragStart, onDragEnd }: any) => {
     const meshRef = useRef<THREE.Mesh>(null!);
     const cloudsRef = useRef<THREE.Mesh>(null!);
     const ringsRef = useRef<THREE.Mesh>(null!);
     const [hovered, setHover] = useState(false);
+    const [dragging, setDragging] = useState(false);
     const [scale, setScale] = useState(0);
+    const [currentPosition, setCurrentPosition] = useState(position);
+
+    useEffect(() => {
+        setCurrentPosition(position);
+    }, [position]);
 
     // Map all 17 high-res textures
     const textureUrls: Record<string, string> = {
@@ -137,8 +143,44 @@ const Node = ({ position, title, color: nodeColor, isSelected, onClick, planetTy
         }
     });
 
+    const handlePointerDown = (e: any) => {
+        if (isLocked) return;
+        e.stopPropagation();
+        setDragging(true);
+        onDragStart?.();
+        // Set the mesh to be the capture target
+        (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    };
+
+    const handlePointerUp = (e: any) => {
+        if (!dragging) return;
+        setDragging(false);
+        onDragEnd?.();
+        (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+        onPositionChange?.(id, currentPosition);
+    };
+
+    const handlePointerMove = (e: any) => {
+        if (!dragging || isLocked) return;
+        e.stopPropagation();
+
+        // Project mouse position to world space at the node's depth
+        const vector = new THREE.Vector3(
+            (e.clientX / window.innerWidth) * 2 - 1,
+            -(e.clientY / window.innerHeight) * 2 + 1,
+            0.5
+        );
+
+        vector.unproject(e.camera);
+        const dir = vector.sub(e.camera.position).normalize();
+        const distance = -e.camera.position.z / dir.z; // Assumes camera looks along Z
+        const pos = e.camera.position.clone().add(dir.multiplyScalar(distance));
+
+        setCurrentPosition([pos.x, pos.y, currentPosition[2]]);
+    };
+
     return (
-        <group position={position} scale={scale * (hovered || isSelected ? 1.2 : 1)}>
+        <group position={currentPosition} scale={scale * (hovered || isSelected || dragging ? 1.2 : 1)}>
             <mesh
                 ref={meshRef}
                 onPointerOver={() => setHover(true)}
@@ -146,7 +188,10 @@ const Node = ({ position, title, color: nodeColor, isSelected, onClick, planetTy
                     setHover(false);
                     window.dispatchEvent(new CustomEvent('mind-palace-node-magnetic', { detail: { x: undefined, y: undefined } }));
                 }}
-                onClick={onClick}
+                onPointerDown={handlePointerDown}
+                onPointerUp={handlePointerUp}
+                onPointerMove={handlePointerMove}
+                onClick={() => !dragging && onClick()}
             >
                 <sphereGeometry args={[1, 64, 64]} />
                 <meshStandardMaterial
@@ -399,13 +444,14 @@ const HeroPlanet = ({ isEntered }: { isEntered: boolean }) => {
     );
 };
 
-const SceneContent = ({ nodes, edges, selectedNode, onNodeSelect, isEntered, onLoaded }: any) => {
+const SceneContent = ({ nodes, edges, selectedNode, onNodeSelect, isEntered, onLoaded, isLocked, onNodePositionUpdate }: any) => {
     const cameraRef = useRef<THREE.PerspectiveCamera>(null!);
     const controlsRef = useRef<any>(null!);
     const [isTransitioning, setIsTransitioning] = useState(false);
+    const [isDraggingNode, setIsDraggingNode] = useState(false);
 
     useFrame(() => {
-        if (controlsRef.current && isEntered && !isTransitioning) {
+        if (controlsRef.current && isEntered && !isTransitioning && !isDraggingNode) {
             controlsRef.current.update();
         }
     });
@@ -515,6 +561,10 @@ const SceneContent = ({ nodes, edges, selectedNode, onNodeSelect, isEntered, onL
                         <Node
                             key={node.id}
                             {...node}
+                            isLocked={isLocked}
+                            onDragStart={() => setIsDraggingNode(true)}
+                            onDragEnd={() => setIsDraggingNode(false)}
+                            onPositionChange={onNodePositionUpdate}
                             isSelected={selectedNode?.id === node.id}
                             onClick={() => !isTransitioning && onNodeSelect(node)}
                         />
@@ -522,7 +572,7 @@ const SceneContent = ({ nodes, edges, selectedNode, onNodeSelect, isEntered, onL
 
                     <OrbitControls
                         ref={controlsRef}
-                        enabled={!isTransitioning}
+                        enabled={!isTransitioning && !isDraggingNode}
                         enablePan={false}
                         enableZoom={true}
                         minDistance={1.5}
@@ -548,7 +598,7 @@ const LoadingTracker = ({ onLoaded }: { onLoaded: (loaded: boolean) => void }) =
     return null;
 };
 
-export default function Experience({ nodes, edges, selectedNode, onNodeSelect, isEntered, onLoaded }: any) {
+export default function Experience({ nodes, edges, selectedNode, onNodeSelect, isEntered, onLoaded, isLocked, onNodePositionUpdate }: any) {
     return (
         <div className="absolute inset-0">
             <Canvas
@@ -564,6 +614,8 @@ export default function Experience({ nodes, edges, selectedNode, onNodeSelect, i
                         onNodeSelect={onNodeSelect}
                         isEntered={isEntered}
                         onLoaded={onLoaded}
+                        isLocked={isLocked}
+                        onNodePositionUpdate={onNodePositionUpdate}
                     />
                 </Suspense>
             </Canvas>

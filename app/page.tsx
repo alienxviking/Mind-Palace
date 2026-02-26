@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 
+import { cn } from "@/lib/utils";
 import Experience from "@/components/Experience";
 import Terminal from "@/components/Terminal";
 import NodeModal from "@/components/NodeModal";
@@ -22,6 +24,7 @@ const ALL_PLANET_TYPES = [
 ];
 
 export default function Home() {
+    const router = useRouter();
     const [selectedNode, setSelectedNode] = useState<any>(null);
     const [nodes, setNodes] = useState<any[]>([]);
     const [edges, setEdges] = useState<any[]>([]);
@@ -32,6 +35,7 @@ export default function Home() {
     const [isAuthOpen, setIsAuthOpen] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
     const [session, setSession] = useState<Session | null>(null);
+    const [isLocked, setIsLocked] = useState(true);
 
     // Initial Setup
     useEffect(() => {
@@ -157,51 +161,30 @@ export default function Home() {
         }
     };
 
-    const handleDeepDive = async (id: any) => {
-        const node = nodes.find(n => n.id === id);
-        if (!node) return;
-
+    const handleConnectNodes = async (sourceId: string, targetId: string) => {
         try {
-            const aiResult = await getDeepDiveContent(node.title);
-            const uniqueTags = Array.from(new Set([...node.tags, ...aiResult.tags]));
-
-            // Persist Update to Supabase
-            await updateNode(id, {
-                summary: aiResult.summary,
-                tags: uniqueTags
-            });
-
-            setNodes(prev => prev.map(n => n.id === id ? {
-                ...n,
-                summary: aiResult.summary,
-                tags: uniqueTags
-            } : n));
-
-            // Refresh and Persist New Links
-            const updatedNodes = nodes.map(n => n.id === id ? { ...n, tags: uniqueTags } : n);
-            const suggestedLinks = await suggestLinks(updatedNodes);
-
-            const currentEdgeKeys = new Set(edges.map(e => `${e.source}-${e.target}`));
-            const newLinks = suggestedLinks.filter(l => !currentEdgeKeys.has(`${l.source}-${l.target}`));
-
-            for (const link of newLinks) {
-                await createEdge({ source_id: link.source, target_id: link.target });
-            }
-
+            await createEdge({ source_id: sourceId, target_id: targetId });
             const refreshedEdges = await fetchEdges();
             setEdges(refreshedEdges.map((e: any) => ({
                 id: e.id,
                 source: e.source_id,
                 target: e.target_id
             })));
+        } catch (err) {
+            console.error("Failed to connect nodes:", err);
+        }
+    };
 
-            setSelectedNode((prev: any) => prev?.id === id ? {
-                ...prev,
-                summary: aiResult.summary,
-                tags: uniqueTags
-            } : prev);
-        } catch (error) {
-            console.error("Deep dive failed:", error);
+    const handleDeepDive = async (id: any) => {
+        router.push(`/deep-dive/${id}`);
+    };
+
+    const handleNodePositionUpdate = async (id: string, newPos: [number, number, number]) => {
+        try {
+            await updateNode(id, { position: newPos });
+            setNodes(prev => prev.map(n => n.id === id ? { ...n, position: newPos } : n));
+        } catch (err) {
+            console.error("Failed to update node position:", err);
         }
     };
 
@@ -214,6 +197,8 @@ export default function Home() {
                 onNodeSelect={setSelectedNode}
                 isEntered={isEntered}
                 onLoaded={setIsLoaded}
+                isLocked={isLocked}
+                onNodePositionUpdate={handleNodePositionUpdate}
             />
 
             {!isEntered && (
@@ -249,18 +234,37 @@ export default function Home() {
                             </div>
 
                             {session && (
-                                <button
-                                    onClick={() => {
-                                        supabase.auth.signOut();
-                                        setIsEntered(false);
-                                    }}
-                                    className="group flex items-center gap-3 px-6 py-3 bg-white/5 hover:bg-red-500/10 border border-white/10 hover:border-red-500/30 rounded-full transition-all"
-                                >
-                                    <span className="text-[10px] font-bold tracking-[0.3em] text-white/40 group-hover:text-red-400 transition-colors uppercase">
-                                        Terminate Session
-                                    </span>
-                                    <LogOut size={14} className="text-white/20 group-hover:text-red-400 transition-colors" />
-                                </button>
+                                <div className="flex flex-col items-end gap-2">
+                                    <button
+                                        onClick={() => {
+                                            supabase.auth.signOut();
+                                            setIsEntered(false);
+                                        }}
+                                        className="group flex items-center gap-3 px-6 py-3 bg-white/5 hover:bg-red-500/10 border border-white/10 hover:border-red-500/30 rounded-full transition-all"
+                                    >
+                                        <span className="text-[10px] font-bold tracking-[0.3em] text-white/40 group-hover:text-red-400 transition-colors uppercase">
+                                            Terminate Session
+                                        </span>
+                                        <LogOut size={14} className="text-white/20 group-hover:text-red-400 transition-colors" />
+                                    </button>
+
+                                    <button
+                                        onClick={() => setIsLocked(!isLocked)}
+                                        className={cn(
+                                            "group flex items-center gap-3 px-6 py-3 border rounded-full transition-all",
+                                            isLocked
+                                                ? "bg-white/5 border-white/10 hover:border-cyan-500/30"
+                                                : "bg-cyan-500/20 border-cyan-500/50 hover:bg-cyan-500/30"
+                                        )}
+                                    >
+                                        <span className={cn(
+                                            "text-[10px] font-bold tracking-[0.3em] uppercase transition-colors",
+                                            isLocked ? "text-white/40 group-hover:text-cyan-400" : "text-cyan-400"
+                                        )}>
+                                            {isLocked ? "Palace Locked" : "Palace Editing"}
+                                        </span>
+                                    </button>
+                                </div>
                             )}
                         </header>
 
@@ -276,6 +280,9 @@ export default function Home() {
                             <Terminal
                                 nodes={nodes}
                                 onNodeCreated={handleNodeCreated}
+                                onNodeDelete={handleNodeDelete}
+                                onNodeSelect={setSelectedNode}
+                                onConnect={handleConnectNodes}
                                 isOpen={isTerminalOpen}
                                 setIsOpen={setIsTerminalOpen}
                             />

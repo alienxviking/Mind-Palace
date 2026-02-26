@@ -24,7 +24,7 @@ export default function NodeModal({ node, onClose, onDelete, onDeepDive }: NodeM
         }
     };
 
-    const hasDeepDive = node.summary && node.summary.length > 150; // Simple check if already dived
+    const hasDeepDive = false; // Allow deep dive even if summary exists
 
     return (
         <AnimatePresence>
