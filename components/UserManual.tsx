@@ -79,9 +79,9 @@ export default function UserManual({ isOpen, onClose }: UserManualProps) {
 
                         {/* Scrollable Content */}
                         <div className="flex-1 overflow-y-auto p-6 md:p-10 relative z-10 custom-scrollbar">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-                                <div className="space-y-6">
-                                    <h3 className="text-sm font-bold text-white/40 uppercase tracking-widest">Controls</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-stretch">
+                                <div className="flex flex-col">
+                                    <h3 className="text-sm font-bold text-white/40 uppercase tracking-widest mb-6">Controls</h3>
                                     <div className="grid grid-cols-1 gap-3">
                                         {controls.map((control, i) => (
                                             <div key={i} className="flex items-center gap-4 p-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-colors group">
@@ -101,22 +101,22 @@ export default function UserManual({ isOpen, onClose }: UserManualProps) {
                                     </div>
                                 </div>
 
-                                <div className="space-y-6">
-                                    <h3 className="text-sm font-bold text-white/40 uppercase tracking-widest">Mind Palace Features</h3>
-                                    <div className="space-y-4">
-                                        <div className="p-5 bg-cyan-500/5 border border-cyan-500/20 rounded-3xl">
+                                <div className="flex flex-col">
+                                    <h3 className="text-sm font-bold text-white/40 uppercase tracking-widest mb-6">Mind Palace Features</h3>
+                                    <div className="flex-1 grid grid-rows-3 gap-3">
+                                        <div className="p-4 bg-cyan-500/5 border border-cyan-500/20 rounded-2xl flex flex-col justify-center">
                                             <h4 className="text-cyan-400 font-bold text-sm mb-2 uppercase tracking-wider">Neural Terminal</h4>
                                             <p className="text-[11px] text-white/60 leading-relaxed uppercase tracking-widest font-medium">
                                                 Use the terminal to create new knowledge nodes and explore links.
                                             </p>
                                         </div>
-                                        <div className="p-5 bg-indigo-500/5 border border-indigo-500/20 rounded-3xl">
+                                        <div className="p-4 bg-indigo-500/5 border border-indigo-500/20 rounded-2xl flex flex-col justify-center">
                                             <h4 className="text-indigo-400 font-bold text-sm mb-2 uppercase tracking-wider">Palace Locking</h4>
                                             <p className="text-[11px] text-white/60 leading-relaxed uppercase tracking-widest font-medium">
                                                 Toggle exploration vs structural editing mode via the footer lock.
                                             </p>
                                         </div>
-                                        <div className="p-5 bg-purple-500/5 border border-purple-500/20 rounded-3xl">
+                                        <div className="p-4 bg-purple-500/5 border border-purple-500/20 rounded-2xl flex flex-col justify-center">
                                             <h4 className="text-purple-400 font-bold text-sm mb-2 uppercase tracking-wider">Deep Dive</h4>
                                             <p className="text-[11px] text-white/60 leading-relaxed uppercase tracking-widest font-medium">
                                                 Select a planet and enter "Deep Dive" to interact with core concepts via AI.
