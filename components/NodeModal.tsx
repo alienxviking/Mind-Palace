@@ -80,9 +80,9 @@ export default function NodeModal({ node, onClose, onDelete, onDeepDive }: NodeM
                     <button
                         onClick={handleDeepDive}
                         disabled={isLoading || hasDeepDive}
-                        className={`w-full py-3 rounded-xl font-bold text-sm shadow-lg transition-all flex items-center justify-center gap-2 palace-button ${(isLoading || hasDeepDive)
+                        className={`w-full py-4 rounded-2xl font-bold text-xs tracking-[0.2em] uppercase transition-all flex items-center justify-center gap-3 palace-button group ${(isLoading || hasDeepDive)
                             ? 'bg-white/5 text-white/40 cursor-not-allowed border border-white/10'
-                            : 'bg-gradient-to-r from-cyan-500 to-purple-600 text-white shadow-cyan-500/20 hover:opacity-90'
+                            : 'bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 shadow-[0_0_20px_rgba(34,211,238,0.1)] hover:shadow-[0_0_30px_rgba(34,211,238,0.2)]'
                             }`}
                         data-cursor={(isLoading || hasDeepDive) ? "SELECT" : "BOX"}
                         data-cursor-magnetic={!(isLoading || hasDeepDive)}
@@ -95,7 +95,10 @@ export default function NodeModal({ node, onClose, onDelete, onDeepDive }: NodeM
                         ) : hasDeepDive ? (
                             "Analysis Complete"
                         ) : (
-                            "Deep Dive"
+                            <>
+                                <Sparkles className="w-4 h-4 text-cyan-400 group-hover:scale-110 transition-transform" />
+                                Deep Dive
+                            </>
                         )}
                     </button>
                 </div>
