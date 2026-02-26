@@ -271,9 +271,14 @@ export default function Home() {
                         <footer className="pointer-events-auto flex justify-between items-end w-full">
                             <div className="glass p-4 rounded-xl max-w-xs">
                                 <p className="text-xs opacity-50 mb-2">HOTKEYS</p>
-                                <div className="flex gap-4 text-[10px] font-mono">
-                                    <span>[L-CLICK] NAVIGATE</span>
-                                    <span>[ESC] RESET</span>
+                                <div className="flex flex-col gap-1 text-[10px] font-mono text-white/60">
+                                    <div className="flex gap-3">
+                                        <span className="text-cyan-400 font-bold">[L-CLICK]</span> <span>PAN</span>
+                                        <span className="text-cyan-400 font-bold">[R-CLICK]</span> <span>ROTATE</span>
+                                    </div>
+                                    <div className="flex gap-3">
+                                        <span className="text-cyan-400 font-bold">[ESC]</span> <span>RESET VIEW</span>
+                                    </div>
                                 </div>
                             </div>
 

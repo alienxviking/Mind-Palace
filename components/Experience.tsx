@@ -573,12 +573,18 @@ const SceneContent = ({ nodes, edges, selectedNode, onNodeSelect, isEntered, onL
                     <OrbitControls
                         ref={controlsRef}
                         enabled={!isTransitioning && !isDraggingNode}
-                        enablePan={false}
+                        enablePan={true}
+                        screenSpacePanning={true}
                         enableZoom={true}
                         minDistance={1.5}
                         maxDistance={50}
                         autoRotate={!selectedNode && !isTransitioning}
                         autoRotateSpeed={0.5}
+                        mouseButtons={{
+                            LEFT: THREE.MOUSE.PAN,
+                            MIDDLE: THREE.MOUSE.DOLLY,
+                            RIGHT: THREE.MOUSE.ROTATE
+                        }}
                     />
                 </>
             )}

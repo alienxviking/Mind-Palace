@@ -191,6 +191,14 @@ export default function DeepDivePage() {
                                 {node.summary}
                             </p>
                         </div>
+
+                        {/* Hotkeys Section */}
+                        <div className="mt-8 flex gap-6 text-[10px] font-mono text-white/30 uppercase tracking-[0.2em]">
+                            <div className="flex items-center gap-2">
+                                <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-cyan-400 font-bold">ESC</span>
+                                <span>Return to Palace</span>
+                            </div>
+                        </div>
                     </motion.div>
                 </div>
 
