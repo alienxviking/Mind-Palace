@@ -53,16 +53,17 @@ const NeuralPulseEdge = ({ start, end }: { start: [number, number, number], end:
                     uniform vec3 uColor;
                     varying vec2 vUv;
                     void main() {
-                        // High-speed energy flow animation
-                        float flow = fract(vUv.x - uTime * 0.8);
-                        float pulse = smoothstep(0.3, 0.5, flow) * smoothstep(0.7, 0.5, flow);
+                        // High-speed energy flow animation - even faster and wider
+                        float flow = fract(vUv.x - uTime * 1.2);
+                        float pulse = smoothstep(0.2, 0.5, flow) * smoothstep(0.8, 0.5, flow);
                         
-                        // Enhanced side glow (fades gracefully at tube edges)
-                        float edgeGlow = pow(sin(vUv.y * 3.14159), 2.5);
+                        // Softer side glow (maintains fullness from all angles)
+                        // Lower power (1.2 instead of 2.5) means less transparent edges
+                        float edgeGlow = pow(sin(vUv.y * 3.14159), 1.2);
                         
-                        // Significant brightness boost
-                        float finalAlpha = (0.25 + pulse * 1.5) * edgeGlow * 0.7;
-                        vec3 finalColor = mix(uColor, vec3(1.0), pulse * 0.7);
+                        // Base constant brightness + dynamic pulse
+                        float finalAlpha = (0.4 + pulse * 2.0) * edgeGlow * 0.8;
+                        vec3 finalColor = mix(uColor, vec3(1.0), pulse * 0.8);
                         
                         gl_FragColor = vec4(finalColor, finalAlpha);
                     }

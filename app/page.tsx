@@ -248,22 +248,6 @@ export default function Home() {
                                         <LogOut size={14} className="text-white/20 group-hover:text-red-400 transition-colors" />
                                     </button>
 
-                                    <button
-                                        onClick={() => setIsLocked(!isLocked)}
-                                        className={cn(
-                                            "group flex items-center gap-3 px-6 py-3 border rounded-full transition-all",
-                                            isLocked
-                                                ? "bg-white/5 border-white/10 hover:border-cyan-500/30"
-                                                : "bg-cyan-500/20 border-cyan-500/50 hover:bg-cyan-500/30"
-                                        )}
-                                    >
-                                        <span className={cn(
-                                            "text-[10px] font-bold tracking-[0.3em] uppercase transition-colors",
-                                            isLocked ? "text-white/40 group-hover:text-cyan-400" : "text-cyan-400"
-                                        )}>
-                                            {isLocked ? "Palace Locked" : "Palace Editing"}
-                                        </span>
-                                    </button>
                                 </div>
                             )}
                         </header>
@@ -291,6 +275,26 @@ export default function Home() {
                                 isOpen={isTerminalOpen}
                                 setIsOpen={setIsTerminalOpen}
                             />
+
+                            {/* Floating Lock Toggle - Bottom Center */}
+                            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 pointer-events-auto">
+                                <button
+                                    onClick={() => setIsLocked(!isLocked)}
+                                    className={cn(
+                                        "group flex items-center gap-4 px-8 py-3 glass-dark border rounded-full transition-all shadow-[0_0_30px_rgba(34,211,238,0.1)] hover:shadow-[0_0_40px_rgba(34,211,238,0.2)]",
+                                        isLocked
+                                            ? "border-white/10 hover:border-cyan-500/30"
+                                            : "bg-cyan-500/10 border-cyan-500/50"
+                                    )}
+                                >
+                                    <span className={cn(
+                                        "text-[10px] font-bold tracking-[0.4em] uppercase transition-colors",
+                                        isLocked ? "text-white/40 group-hover:text-cyan-400" : "text-cyan-400"
+                                    )}>
+                                        {isLocked ? "Palace Locked" : "Palace Unlocked"}
+                                    </span>
+                                </button>
+                            </div>
                         </footer>
                     </div>
 
