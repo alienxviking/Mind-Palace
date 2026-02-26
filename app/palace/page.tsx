@@ -64,8 +64,14 @@ export default function PalacePage() {
 
     useEffect(() => {
         if (isLoaded) {
-            const timer = setTimeout(() => setShowManual(true), 1500);
-            return () => clearTimeout(timer);
+            const hasShownManual = sessionStorage.getItem("mind-palace-manual-shown");
+            if (!hasShownManual) {
+                const timer = setTimeout(() => {
+                    setShowManual(true);
+                    sessionStorage.setItem("mind-palace-manual-shown", "true");
+                }, 1500);
+                return () => clearTimeout(timer);
+            }
         }
     }, [isLoaded]);
 

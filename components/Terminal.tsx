@@ -40,6 +40,15 @@ export default function Terminal({
             setHistory(prev => [...prev, "Available: create [title], delete [title], connect [t1] [t2], find [title], list, clear"]);
         } else if (cmd === "create" && cmdParts.length > 1) {
             const title = cmdParts.slice(1).join(" ");
+
+            // Prevent duplicate node names
+            const duplicate = nodes.find(n => n.title.toLowerCase() === title.toLowerCase());
+            if (duplicate) {
+                setHistory(prev => [...prev, `Error: Node '${title}' already exists in your Mind Palace.`]);
+                setInput("");
+                return;
+            }
+
             setHistory(prev => [...prev, `AI: Architecting node '${title}'...`]);
 
             try {
