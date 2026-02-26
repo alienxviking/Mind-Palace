@@ -2,14 +2,16 @@
 
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 interface LandingUIProps {
     onEnter: () => void;
     onSignIn: () => void;
     isLoaded: boolean;
+    isDiving?: boolean;
 }
 
-export default function LandingUI({ onEnter, onSignIn, isLoaded }: LandingUIProps) {
+export default function LandingUI({ onEnter, onSignIn, isLoaded, isDiving }: LandingUIProps) {
     return (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center p-8 pointer-events-none">
             <AnimatePresence mode="wait">
@@ -80,11 +82,25 @@ export default function LandingUI({ onEnter, onSignIn, isLoaded }: LandingUIProp
                         >
                             <button
                                 onClick={onEnter}
-                                data-cursor="BOX"
-                                className="group relative px-16 py-6 bg-white/5 hover:bg-white/10 text-white font-black text-xl tracking-[0.3em] rounded-full transition-all duration-500 border border-white/20 hover:border-cyan-400/50 shadow-[0_0_50px_rgba(255,255,255,0.05)] hover:shadow-[0_0_80px_rgba(34,211,238,0.2)] hover:scale-105 active:scale-95"
+                                disabled={isDiving}
+                                data-cursor={isDiving ? null : "BOX"}
+                                className={cn(
+                                    "group relative px-16 py-6 font-black text-xl tracking-[0.3em] rounded-full transition-all duration-500 border shadow-[0_0_50px_rgba(255,255,255,0.05)]",
+                                    isDiving
+                                        ? "bg-white/5 border-white/10 cursor-wait opacity-40"
+                                        : "bg-white/5 hover:bg-white/10 text-white border-white/20 hover:border-cyan-400/50 hover:shadow-[0_0_80px_rgba(34,211,238,0.2)] hover:scale-105 active:scale-95 pointer-events-auto"
+                                )}
                             >
-                                <span className="relative z-10">DIVE IN</span>
-                                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                <span className={cn(
+                                    "relative z-10 transition-all duration-500",
+                                    isDiving ? "text-white/40" : "text-white"
+                                )}>
+                                    {isDiving ? "DIVING IN..." : "DIVE IN"}
+                                </span>
+                                <div className={cn(
+                                    "absolute inset-0 rounded-full transition-opacity duration-500",
+                                    isDiving ? "opacity-0" : "bg-gradient-to-r from-cyan-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100"
+                                )} />
                             </button>
                         </motion.div>
 

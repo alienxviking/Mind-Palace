@@ -90,7 +90,7 @@ export default function DeepDivePage() {
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Escape") {
-                router.push("/");
+                router.push("/palace");
             }
         };
         window.addEventListener("keydown", handleKeyDown);
@@ -167,7 +167,7 @@ export default function DeepDivePage() {
                         animate={{ opacity: 1, x: 0 }}
                     >
                         <button
-                            onClick={() => router.push("/")}
+                            onClick={() => router.push("/palace")}
                             className="flex items-center gap-2 text-white/40 hover:text-cyan-400 transition-colors mb-8 group"
                         >
                             <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
