@@ -6,6 +6,16 @@ import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motio
 export default function CustomCursor() {
     const [hoverType, setHoverType] = useState<string | null>(null);
     const [isVisible, setIsVisible] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.matchMedia("(pointer: coarse), (max-width: 768px)").matches);
+        };
+        checkMobile();
+        window.addEventListener("resize", checkMobile);
+        return () => window.removeEventListener("resize", checkMobile);
+    }, []);
 
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
@@ -66,7 +76,7 @@ export default function CustomCursor() {
     }, [isVisible]);
     // Removed hoverType from dependencies
 
-    if (!isVisible) return null;
+    if (!isVisible || isMobile) return null;
 
     const isHovered = !!hoverType;
 
