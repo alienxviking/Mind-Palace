@@ -88,6 +88,16 @@ export default function DeepDivePage() {
     const scrollRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape") {
+                router.push("/");
+            }
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [router]);
+
+    useEffect(() => {
         const loadNode = async () => {
             const nodes = await fetchNodes();
             const found = nodes.find((n: any) => n.id === id);
