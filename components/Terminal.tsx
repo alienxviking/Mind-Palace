@@ -101,11 +101,14 @@ export default function Terminal({
         <>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="glass-dark p-4 rounded-full hover:scale-110 border border-cyan-500/30 transition-all pointer-events-auto palace-button shadow-[0_0_20px_rgba(34,211,238,0.2)]"
+                className="glass-dark px-6 py-4 rounded-full hover:scale-105 border border-cyan-500/30 transition-all pointer-events-auto palace-button shadow-[0_0_20px_rgba(34,211,238,0.2)] flex items-center gap-3 group"
                 data-cursor="BOX"
                 data-cursor-magnetic
             >
-                <TerminalIcon className="w-6 h-6 text-cyan-400" />
+                <TerminalIcon className="w-5 h-5 text-cyan-400 group-hover:scale-110 transition-transform" />
+                <span className="text-[10px] font-bold tracking-[0.3em] text-white/40 group-hover:text-cyan-400 transition-colors uppercase">
+                    Terminal
+                </span>
             </button>
 
             <AnimatePresence>

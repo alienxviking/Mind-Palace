@@ -42,9 +42,11 @@ export default function PalacePage() {
         };
         checkAuth();
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
             setSession(session);
-            if (!session) router.push("/");
+            if (!session || event === "SIGNED_OUT") {
+                router.replace("/");
+            }
         });
 
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -207,8 +209,13 @@ export default function PalacePage() {
 
                             <button
                                 onClick={async () => {
-                                    await supabase.auth.signOut();
-                                    router.push("/");
+                                    try {
+                                        await supabase.auth.signOut();
+                                        router.replace("/");
+                                    } catch (err) {
+                                        console.error("Sign out failed:", err);
+                                        window.location.href = "/";
+                                    }
                                 }}
                                 className="group flex items-center gap-3 px-6 py-3 bg-white/5 hover:bg-red-500/10 border border-white/10 hover:border-red-500/30 rounded-full transition-all"
                             >
